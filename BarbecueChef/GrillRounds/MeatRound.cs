@@ -1,4 +1,4 @@
-﻿using BarbecueChef.Models;
+﻿using BarbecueChef.Grills;
 
 namespace BarbecueChef.GrillRounds
 {

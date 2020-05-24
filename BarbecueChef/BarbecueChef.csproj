@@ -42,20 +42,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\GrillRoundAvailabilityException.cs" />
-    <Compile Include="MaxRectangle\MaxRectangleHelper.cs" />
+    <Compile Include="MaxRectangle\IMaxRectangle.cs" />
+    <Compile Include="MaxRectangle\MaxRectangleHistogram.cs" />
     <Compile Include="MeatChoosers\LargestAreaMeatChooserStrategy.cs" />
+    <Compile Include="MeatChoosers\LargestWidthMenuPriorityMeatChooserStrategy.cs" />
     <Compile Include="MeatChoosers\LargestWidthMeatChooserStrategy.cs" />
     <Compile Include="MeatChoosers\LargestLengthMeatChooserStrategy.cs" />
     <Compile Include="GrillRounds\MeatRound.cs" />
-    <Compile Include="MaxRectangle\Area.cs" />
-    <Compile Include="SortingStrategy\ISortingStrategy.cs" />
+    <Compile Include="MaxRectangle\Rectangle.cs" />
     <Compile Include="MeatChoosers\IMeatChooserStrategy.cs" />
-    <Compile Include="Models\Grill.cs" />
-    <Compile Include="Models\Meat.cs" />
-    <Compile Include="Models\Menu.cs" />
+    <Compile Include="Grills\Grill.cs" />
+    <Compile Include="Grills\Meat.cs" />
+    <Compile Include="Grills\Menu.cs" />
     <Compile Include="GrillRounds\GrillRound.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\MenuRequestService.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

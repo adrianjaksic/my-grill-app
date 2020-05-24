@@ -1,6 +1,6 @@
 ﻿namespace BarbecueChef.MaxRectangle
 {
-    public class Area
+    public class Rectangle
     {
         public int LengthPosition { get; set; }
         public int WidthPosition { get; set; }

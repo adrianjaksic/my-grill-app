@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace BarbecueChef.MaxRectangle
 {
     //https://www.geeksforgeeks.org/maximum-size-rectangle-binary-sub-matrix-1s/
-    //Minor modifications, added return Area
-    public static class MaxRectangleHelper
+    //Minor modifications, added Rectangle information (original algorithm used just area)
+    public class MaxRectangleHistogram : IMaxRectangle
     {
-        public static Area GetLargestArea(bool[,] surface)
+        public Rectangle GetLargestRectangle(bool[,] surface)
         {
             int[][] area = new int[surface.GetLength(0)][];
             for (int i = 0; i < surface.GetLength(0); i++)
@@ -21,11 +20,11 @@ namespace BarbecueChef.MaxRectangle
             return MaxRectangle(surface.GetLength(0), surface.GetLength(1), area);
         }
 
-        private static Area MaxHist(int width,
+        private Rectangle MaxRectangleUnderHistogram(int width,
                               int[] row, int lengthPosition)
         {
-            int areaLength = 0;
-            int areaWidth = 0;
+            int rectangleLength = 0;
+            int rectangleWidth = 0;
             int widthPosition = 0;
 
             // Create an empty stack. The stack 
@@ -75,25 +74,27 @@ namespace BarbecueChef.MaxRectangle
                     {
                         if (result.Count > 0)
                         {
-                            areaWidth = (i - result.Peek() - 1);
+                            rectangleWidth = (i - result.Peek() - 1);
                         }
                         else
                         {
-                            areaWidth = i;
+                            rectangleWidth = i;
                         }
-                        areaLength = top_val;
-                        widthPosition = i - areaWidth;
+                        rectangleLength = top_val;
+                        widthPosition = i - rectangleWidth;
                         max_area = area;
                     }
                 }
             }
 
+            var widthDiff = i - result.Count;
             // Now pop the remaining bars from 
             // stack and calculate area with 
             // every popped bar as the smallest bar 
             while (result.Count > 0)
             {
                 top_val = row[result.Peek()];
+                var tempWidth = result.Peek();
                 result.Pop();
                 area = top_val * i;
                 if (result.Count > 0)
@@ -105,41 +106,43 @@ namespace BarbecueChef.MaxRectangle
                 {
                     if (result.Count > 0)
                     {
-                        areaWidth = (i - result.Peek() - 1);
+                        rectangleWidth = (i - result.Peek() - 1);
+                        widthPosition = tempWidth - (tempWidth - result.Peek() - 1);
+
                     }
                     else
                     {
-                        areaWidth = i;
+                        rectangleWidth = i;
+                        widthPosition = 0;
                     }
-                    areaLength = top_val;
+                    rectangleLength = top_val;
                     max_area = area;
-                    widthPosition = result.Count;
                 }
             }
 
-            //if no area found
-            if (areaLength == 0 || areaWidth == 0)
+            //if no rectangle found
+            if (rectangleLength == 0 || rectangleWidth == 0)
             {
-                return new Area();
+                return new Rectangle();
             }
 
-            return new Area()
+            return new Rectangle()
             {
-                Length = areaLength,
-                Width = areaWidth,
-                LengthPosition = lengthPosition - areaLength + 1,
+                Length = rectangleLength,
+                Width = rectangleWidth,
+                LengthPosition = lengthPosition - rectangleLength + 1,
                 WidthPosition = widthPosition,
             };
         }
 
         // Returns area of the largest 
         // rectangle with all 1s in A[][] 
-        private static Area MaxRectangle(int length, int width,
+        private Rectangle MaxRectangle(int length, int width,
                                        int[][] A)
         {
-            // Calculate area for first row 
+            // Calculate rectangle for first row 
             // and initialize it as result 
-            Area result = MaxHist(width, A[0], 0);
+            Rectangle maxRectangle = MaxRectangleUnderHistogram(width, A[0], 0);
 
             // iterate over row to find 
             // maximum rectangular area 
@@ -157,16 +160,16 @@ namespace BarbecueChef.MaxRectangle
                     }
                 }
 
-                // Update result if area with current 
+                // Update maxRectangle if area with current 
                 // row (as last row of rectangle) is more 
-                var rowArea = MaxHist(width, A[i], i);
-                if (rowArea.Length * rowArea.Width > result.Length * result.Width)
+                var rowRectangle = MaxRectangleUnderHistogram(width, A[i], i);
+                if (rowRectangle.Length * rowRectangle.Width > maxRectangle.Length * maxRectangle.Width)
                 {
-                    result = rowArea;
+                    maxRectangle = rowRectangle;
                 }
             }
 
-            return result;
+            return maxRectangle;
         }
     }
 }

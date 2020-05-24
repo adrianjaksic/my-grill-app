@@ -1,6 +1,6 @@
 using BarbecueChef.Exceptions;
 using BarbecueChef.GrillRounds;
-using BarbecueChef.Models;
+using BarbecueChef.Grills;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BarbecueChef.Tests

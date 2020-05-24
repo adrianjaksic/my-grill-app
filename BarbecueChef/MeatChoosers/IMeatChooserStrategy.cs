@@ -1,4 +1,4 @@
-﻿using BarbecueChef.Models;
+﻿using BarbecueChef.Grills;
 using System.Collections.Generic;
 
 namespace BarbecueChef.MeatChoosers

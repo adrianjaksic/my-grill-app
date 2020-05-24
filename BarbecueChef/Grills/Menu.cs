@@ -1,17 +1,20 @@
 ﻿using System.Collections.Generic;
 
-namespace BarbecueChef.Models
+namespace BarbecueChef.Grills
 {
     public class Menu
     {
-        public int MenuId { get; set; }
+        public int SortOrder { get; set; }
+        public string MenuId { get; set; }
+        public string Name { get; set; }
         public List<Meat> Items { get; private set; } = new List<Meat>();
+        public bool Finished => GetFinished();
 
-        public bool IsFinished()
+        private bool GetFinished()
         {
             foreach (var item in Items)
             {
-                if (item.Quantity > item.PrepearedQuantity)
+                if (!item.Finished)
                 {
                     return false;
                 }

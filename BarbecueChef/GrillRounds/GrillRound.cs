@@ -1,5 +1,5 @@
 ﻿using BarbecueChef.Exceptions;
-using BarbecueChef.Models;
+using BarbecueChef.Grills;
 using System.Collections.Generic;
 
 namespace BarbecueChef.GrillRounds
@@ -46,6 +46,7 @@ namespace BarbecueChef.GrillRounds
                 Length = meatLength,
                 Width = meatWidth,
             });
+            meat.SortedQuantity++;
         }
 
         /// <summary>

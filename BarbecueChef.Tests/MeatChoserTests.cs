@@ -1,5 +1,5 @@
 ﻿using BarbecueChef.MeatChoosers;
-using BarbecueChef.Models;
+using BarbecueChef.Grills;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 
