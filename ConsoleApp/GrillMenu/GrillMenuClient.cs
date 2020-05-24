@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 
-namespace ConsoleApp.Services
+namespace ConsoleApp.GrillMenu
 {
     public class GrillMenuClient : ServiceClient<GrillMenuClient>
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Rest;
 
-namespace ConsoleApp.Services
+namespace ConsoleApp.GrillMenu
 {
     public class AnonymousCredentials : ServiceClientCredentials
     {

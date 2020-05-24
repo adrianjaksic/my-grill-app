@@ -1,7 +1,7 @@
 ﻿using BarbecueChef.Grills;
 using BarbecueChef.MaxRectangle;
 using BarbecueChef.MeatChoosers;
-using ConsoleApp.Services;
+using ConsoleApp.GrillMenu;
 using System;
 
 namespace ConsoleApp
@@ -9,13 +9,15 @@ namespace ConsoleApp
     class Program
     {
         //Best strategies: LargestWidthMeatChooserStrategy-31, LargestWidthMenuPriorityMeatChooserStrategy-32, LargestLengthMeatChooserStrategy-36, LargestAreaMeatChooserStrategy-31
+        private static int GrillLength = 20;
+        private static int GrillWidth = 30;
         private static readonly IMeatChooserStrategy MeatChooserStrategy = new LargestWidthMenuPriorityMeatChooserStrategy();
         private static readonly IMaxRectangle MaxRectangle = new MaxRectangleHistogram();
         private const int TimeElapsedFixedForAllMeals = 480;
-        
+
         static void Main(string[] args)
         {
-            var grill = new Grill(20, 30, MeatChooserStrategy, MaxRectangle);
+            var grill = new Grill(GrillLength, GrillWidth, MeatChooserStrategy, MaxRectangle);
 
             using (var client = new GrillMenuClient(new AnonymousCredentials()))
             {
