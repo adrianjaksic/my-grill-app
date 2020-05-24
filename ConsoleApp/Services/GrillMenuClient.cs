@@ -1,30 +1,50 @@
 ﻿using BarbecueChef.Grills;
-using ConsoleApp.Interfaces;
+using Microsoft.Rest;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 
 namespace ConsoleApp.Services
 {
-    public class MenuRequestService : IMenuService
+    public class GrillMenuClient : ServiceClient<GrillMenuClient>
     {
-        private const string MenuEndpoint = "http://isol-grillassessment.azurewebsites.net/api/GrillMenu";
-
-        public List<Menu> GetMenus()
+        public ServiceClientCredentials Credentials { get; }
+        public Uri BaseUri
         {
-            using (var client = new HttpClient())
+            get { return HttpClient.BaseAddress; }
+        }
+
+        private const string DefaultBaseUri = "http://isol-grillassessment.azurewebsites.net";
+        private const double HttpClientTimeoutInSeconds = 30;
+
+        public GrillMenuClient(ServiceClientCredentials credentials, params DelegatingHandler[] handlers) : base(handlers)
+        {
+            if (credentials == null)
             {
-                var result = client.GetAsync(MenuEndpoint).Result;
-                using (HttpContent content = result.Content)
+                throw new ArgumentNullException("credentials");
+            }
+
+            Credentials = credentials;
+            Credentials.InitializeServiceClient(this);            
+            HttpClient.Timeout = TimeSpan.FromSeconds(HttpClientTimeoutInSeconds);
+            HttpClient.BaseAddress = new Uri(DefaultBaseUri);
+        }
+
+        public List<Menu> GetAll()
+        {
+            const string url = "/api/GrillMenu";
+            var result = HttpClient.GetAsync(url).Result;
+            using (HttpContent content = result.Content)
+            {
+                string data = content.ReadAsStringAsync().Result;
+                if (data != null)
                 {
-                    string data = content.ReadAsStringAsync().Result;
-                    if (data != null)
+                    using (var jsonDoc = JsonDocument.Parse(data))
                     {
-                        using (var jsonDoc = JsonDocument.Parse(data))
-                        {
-                            var root = jsonDoc.RootElement;
-                            return DeserializeMenu(root);
-                        }
+                        var root = jsonDoc.RootElement;
+                        return DeserializeMenu(root).OrderBy(m => m.Name).ToList();
                     }
                 }
             }
