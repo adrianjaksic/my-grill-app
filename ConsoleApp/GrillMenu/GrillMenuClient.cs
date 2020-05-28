@@ -1,10 +1,12 @@
 ﻿using BarbecueChef.Grills;
 using Microsoft.Rest;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
+using System.Web.Script.Serialization;
 
 namespace ConsoleApp.GrillMenu
 {
@@ -41,54 +43,18 @@ namespace ConsoleApp.GrillMenu
                 string data = content.ReadAsStringAsync().Result;
                 if (data != null)
                 {
-                    using (var jsonDoc = JsonDocument.Parse(data))
-                    {
-                        var root = jsonDoc.RootElement;
-                        return DeserializeMenu(root).OrderBy(m => m.Name).ToList();
-                    }
+                    var rez = JsonConvert.DeserializeObject<List<Menu>>(data).OrderBy(m => m.Name).ToList();
+                    rez.ForEach(m => m.Items.ForEach(i => UpdateTimeAndMenu(i, m)));
+                    return rez;
                 }
             }
             return new List<Menu>();
         }
 
-        private List<Menu> DeserializeMenu(JsonElement root)
+        private void UpdateTimeAndMenu(Meat meat, Menu menu)
         {
-            var menus = new List<Menu>();
-            foreach (var menuItem in root.EnumerateArray())
-            {
-                var newMenu = new Menu();
-                newMenu.MenuId = menuItem.GetProperty("Id").GetString();
-                newMenu.Name = menuItem.GetProperty("menu").GetString();
-                var items = menuItem.GetProperty("items");
-                for (var i = 0; i < items.GetArrayLength(); i++)
-                {
-                    Meat meat = DeserializeMeat(items[i], i);
-                    meat.Menu = newMenu;
-                    newMenu.Items.Add(meat);
-                }
-                menus.Add(newMenu);
-            }
-            return menus;
-        }
-
-        private Meat DeserializeMeat(JsonElement item, int i)
-        {
-            return new Meat()
-            {
-                Id = item.GetProperty("Id").GetString(),
-                Name = item.GetProperty("Name").GetString(),
-                Length = item.GetProperty("Length").GetInt32(),
-                Width = item.GetProperty("Width").GetInt32(),
-                Time = DeserializeTime(item.GetProperty("Duration").GetString()),
-                Quantity = item.GetProperty("Quantity").GetInt32(),
-                SortedQuantity = 0,
-                PrepearedQuantity = 0,
-            };
-        }
-
-        private int DeserializeTime(string stringTime)
-        {
-            var split = stringTime.Split(':');
+            meat.Menu = menu;
+            var split = meat.Duration.Split(':');
             int hours = 0;
             int minutes = 0;
             int seconds = 0;
@@ -104,7 +70,7 @@ namespace ConsoleApp.GrillMenu
             {
                 int.TryParse(split[2], out seconds);
             }
-            return hours * 60 * 60 + minutes * 60 + seconds;                
+            meat.Time = hours * 60 * 60 + minutes * 60 + seconds;
         }
     }
 }
